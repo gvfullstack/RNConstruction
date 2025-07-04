@@ -27,7 +27,9 @@ export default function Header({ active = 'home' }: Props) {
             priority
             className="h-10 w-auto md:h-12"
           />
-          <span className="text-2xl md:text-3xl font-bold tracking-tight">RN Construction</span>
+          <span className="text-2xl md:text-3xl font-bold tracking-tight">
+            RN Construction
+          </span>
         </Link>
 
         {/* Navigation ----------------------------------------------------- */}
@@ -35,7 +37,10 @@ export default function Header({ active = 'home' }: Props) {
           <Link href="/" className={active === 'home' ? highlight : base}>
             Home
           </Link>
-          <Link href="/fire-rebuild" className={active === 'fire-rebuild' ? highlight : base}>
+          <Link
+            href="/fire-rebuild"
+            className={active === 'fire-rebuild' ? highlight : base}
+          >
             Fire Rebuild
           </Link>
           <Link href="/about" className={active === 'about' ? highlight : base}>
@@ -43,24 +48,39 @@ export default function Header({ active = 'home' }: Props) {
           </Link>
         </nav>
 
-        {/* Call-now CTA ---------------------------------------------------- */}
-        <a
-          href="tel:6267609310"
-          className="flex items-center gap-2 px-4 md:px-6 py-2 rounded-full bg-[#B21F24] text-white text-sm md:text-base
-                     font-semibold shadow-md shadow-gray-200/50 hover:brightness-110 transition whitespace-nowrap"
-        >
-          {/* phone icon on small screens */}
-          <svg
-            className="h-4 w-4 md:hidden"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+        {/* CTA Buttons ---------------------------------------------------- */}
+        <div className="flex items-center gap-3">
+          {/* Schedule button (desktop only) */}
+          <a
+            href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:inline-flex items-center px-4 py-2 rounded-full border border-[#B21F24]
+                       text-[#B21F24] text-sm font-semibold shadow-md hover:bg-[#B21F24]/10 transition whitespace-nowrap"
           >
-            <path d="M6.62 10.79a15.91 15.91 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.72 11.72 0 003.64.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.12a1 1 0 011 1 11.72 11.72 0 00.58 3.64 1 1 0 01-.21 1.11l-2.87 2.87z" />
-          </svg>
-          {/* full number visible from md-up */}
-          <span className="hidden md:inline">Call 626-760-9310</span>
-        </a>
+            Schedule a Consultation
+          </a>
+
+          {/* Call button (always visible) */}
+          <a
+            href="tel:6267609310"
+            className="flex items-center gap-2 px-4 md:px-6 py-2 rounded-full bg-[#B21F24] text-white
+                       text-sm md:text-base font-semibold shadow-md shadow-gray-200/50 hover:brightness-110
+                       transition whitespace-nowrap"
+          >
+            {/* phone icon on mobile */}
+            <svg
+              className="h-4 w-4 md:hidden"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M6.62 10.79a15.91 15.91 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.72 11.72 0 003.64.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.12a1 1 0 011 1 11.72 11.72 0 00.58 3.64 1 1 0 01-.21 1.11l-2.87 2.87z" />
+            </svg>
+            {/* visible phone number on desktop */}
+            <span className="hidden md:inline">Call 626-760-9310</span>
+          </a>
+        </div>
       </div>
     </header>
   );
