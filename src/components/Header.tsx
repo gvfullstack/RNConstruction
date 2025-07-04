@@ -51,15 +51,17 @@ export default function Header({ active = 'home' }: Props) {
         {/* CTA Buttons ---------------------------------------------------- */}
         <div className="flex items-center gap-3">
           {/* Schedule button (desktop only) */}
-          <a
+         <a
             href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center px-4 py-2 rounded-full border border-[#B21F24]
-                       text-[#B21F24] text-sm font-semibold shadow-md hover:bg-[#B21F24]/10 transition whitespace-nowrap"
+            className="hidden md:inline-flex items-center px-4 py-2 rounded-full
+                      border border-white text-white text-sm font-semibold shadow-md
+                      hover:bg-white/10 transition whitespace-nowrap"
           >
             Schedule a Consultation
           </a>
+
 
           {/* Call button (always visible) */}
           <a

@@ -34,16 +34,29 @@ export default function FireRebuild() {
               and craftsmanship.
             </p>
 
-            <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-4 sm:space-y-0 justify-center">
-              <a
-                href="tel:6267609310"
-                className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#B21F24] text-white font-semibold
-                           shadow-md shadow-gray-200/50 hover:brightness-110 transition"
-              >
-                Call Us
-              </a>
-             
-            </div>
+           <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-4 sm:space-y-0 justify-center">
+  {/* Call button */}
+  <a
+    href="tel:6267609310"
+    className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-full
+               bg-[#B21F24] text-white font-semibold shadow-md shadow-gray-200/50
+               hover:brightness-110 transition whitespace-nowrap"
+  >
+    Call&nbsp;Us
+  </a>
+
+  {/* Schedule button – outlined for contrast, width matches */}
+<a
+  href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center px-6 sm:px-8 py-3 rounded-full
+             border border-white text-white font-semibold shadow-md
+             hover:bg-white/10 transition whitespace-nowrap"
+>
+  Schedule&nbsp;a&nbsp;Consultation
+</a>
+</div>
           </div>
         </section>
 
@@ -94,12 +107,12 @@ export default function FireRebuild() {
             <div>
               <h3 className="text-3xl font-semibold text-[#B21F24] mb-4">See the Transformation</h3>
               <p className="text-lg leading-relaxed">
-                We turn devastation into new beginnings. Browse our gallery of before-and-after
-                transformations to witness the quality of our work.
+                We turn devastation into new beginnings. Let us help you rebuild with care, craftsmanship, and confidence.
+ 
               </p>
-              <a href="#consult" className="inline-block mt-6 text-[#B21F24] font-semibold hover:underline">
+              {/* <a href="#consult" className="inline-block mt-6 text-[#B21F24] font-semibold hover:underline">
                 View more examples &raquo;
-              </a>
+              </a> */}
             </div>
           </div>
         </section>
@@ -112,12 +125,16 @@ export default function FireRebuild() {
               Schedule a free, no-obligation consultation to discuss your fire-loss project and see how we can help you restore
               your home.
             </p>
-            <a
-              href="tel:7075410160"
-              className="bg-white text-[#B21F24] px-8 py-4 rounded font-semibold hover:bg-gray-100"
-            >
-              Call 626-760-9310
-            </a>
+           <a
+  href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center px-6 sm:px-8 py-3 rounded-full
+             border border-white text-white font-semibold shadow-md
+             hover:bg-white/10 transition whitespace-nowrap"
+>
+  Schedule&nbsp;a&nbsp;Consultation
+</a>
           </div>
         </section>
       </main>
