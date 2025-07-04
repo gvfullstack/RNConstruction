@@ -45,7 +45,7 @@ export default function Header({ active = 'home' }: Props) {
 
         {/* Call-now CTA ---------------------------------------------------- */}
         <a
-          href="tel:7075410160"
+          href="tel:6267609310"
           className="flex items-center gap-2 px-4 md:px-6 py-2 rounded-full bg-[#B21F24] text-white text-sm md:text-base
                      font-semibold shadow-md shadow-gray-200/50 hover:brightness-110 transition whitespace-nowrap"
         >
@@ -59,7 +59,7 @@ export default function Header({ active = 'home' }: Props) {
             <path d="M6.62 10.79a15.91 15.91 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.72 11.72 0 003.64.58 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.12a1 1 0 011 1 11.72 11.72 0 00.58 3.64 1 1 0 01-.21 1.11l-2.87 2.87z" />
           </svg>
           {/* full number visible from md-up */}
-          <span className="hidden md:inline">Call 707-541-0160</span>
+          <span className="hidden md:inline">Call 626-760-9310</span>
         </a>
       </div>
     </header>

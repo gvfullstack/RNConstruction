@@ -36,7 +36,7 @@ export default function FireRebuild() {
 
             <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-4 sm:space-y-0 justify-center">
               <a
-                href="tel:7075410160"
+                href="tel:6267609310"
                 className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#B21F24] text-white font-semibold
                            shadow-md shadow-gray-200/50 hover:brightness-110 transition"
               >
@@ -116,7 +116,7 @@ export default function FireRebuild() {
               href="tel:7075410160"
               className="bg-white text-[#B21F24] px-8 py-4 rounded font-semibold hover:bg-gray-100"
             >
-              Call 707-541-0160
+              Call 626-760-9310
             </a>
           </div>
         </section>

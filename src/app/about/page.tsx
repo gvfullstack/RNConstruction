@@ -16,14 +16,14 @@ export default function About() {
               <h1 className="text-4xl font-extrabold text-[#B21F24] mb-6">About RN Construction</h1>
               <p className="text-lg leading-relaxed mb-6">
                 With decades of combined experience, we specialize in helping families recover from disaster with dignity and confidence.
-                Licensed in California (#1015528) &amp; Nevada (#0043620), we’ve rebuilt homes from Sonoma County’s Tubbs Fire to the hills
+                Licensed in California (#1015528), we’ve rebuilt homes from Sonoma County’s Tubbs Fire to the hills
                 of Altadena.
               </p>
               <ul className="text-gray-700 space-y-2 mb-8">
                 <li>📍 PO Box 1712, Santa Rosa, CA 95402</li>
-                <li>📞 <a href="tel:7075410160" className="text-[#B21F24]">707-541-0160</a></li>
-                <li>📠 Fax 707-541-0163</li>
-                <li>📱 <a href="tel:7079753857" className="text-[#B21F24]">707-975-3857</a></li>
+                {/* <li>📞 <a href="tel:7075410160" className="text-[#B21F24]">707-541-0160</a></li>
+                <li>📠 Fax 707-541-0163</li> */}
+                <li>📱 <a href="tel:6267609310" className="text-[#B21F24]">626-760-9310</a></li>
                 <li>✉️ <a href="mailto:rnobles@rnconstruction.com" className="text-[#B21F24]">rnobles@rnconstruction.com</a></li>
               </ul>
             </div>
