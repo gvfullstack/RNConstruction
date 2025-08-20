@@ -729,7 +729,7 @@ export default function ProjectsClient() {
         <section className="py-16 bg-[#B21F24] text-white text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-semibold mb-4">Ready to talk through your project?</h3>
-            <p className="text-lg mb-8">We\'ll align scope, budget, and schedule, then build with care.</p>
+            <p className="text-lg mb-8">We&#39;ll align scope, budget, and schedule, then build with care.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
