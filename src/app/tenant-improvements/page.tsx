@@ -85,27 +85,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Review lease and building rules,
-                    walk the space, confirm existing systems, access, and staging.
-                  </li>
-                  <li>
-                    <strong>Design and permits.</strong> Prepare drawings, ADA and
-                    fire/life safety items, coordinate MEP, and track comments and
-                    inspection order.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Protect common areas, set
-                    barriers, and use negative air if needed. Trades are sequenced
-                    to reduce noise and downtime; off-hour work is scheduled when
-                    required.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Complete punch items quickly, deliver
-                    O&amp;M documents and warranties, and turn over a clean space.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Review lease and building rules, walk the space, confirm existing systems, access, and staging.",
+                        },
+                        {
+                          step: "2",
+                          title: "Design & Permits",
+                          desc:
+                            "Prepare drawings, ADA and fire/life safety items, coordinate MEP, and track comments and inspection order.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Protect common areas, set barriers, and use negative air if needed. Trades are sequenced to reduce noise and downtime; off-hour work is scheduled when required.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Complete punch items quickly, deliver O&M documents and warranties, and turn over a clean space.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines depend on scope, approvals, building rules, and lead
                   times. A working schedule is shared after permit milestones and

@@ -87,24 +87,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Review lease drawings, existing conditions, and
-                    business needs. Walk the space and confirm utilities, access, and staging.
-                  </li>
-                  <li>
-                    <strong>Design and permits.</strong> Coordinate drawings and ADA checks,
-                    track comments, and schedule inspections in the right order.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Sequence trades so work does not clash with
-                    daily operations. Keep dust, noise, and pathways managed in occupied buildings.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Finish punch items quickly, deliver O&amp;M docs
-                    and warranties, and confirm final sign-offs.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Review lease drawings, existing conditions, and business needs. Walk the space and confirm utilities, access, and staging.",
+                        },
+                        {
+                          step: "2",
+                          title: "Design & Permits",
+                          desc:
+                            "Coordinate drawings and ADA checks, track comments, and schedule inspections in the right order.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Sequence trades so work does not clash with daily operations. Keep dust, noise, and pathways managed in occupied buildings.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Finish punch items quickly, deliver O&M docs and warranties, and confirm final sign-offs.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines vary by jurisdiction, scope, and lead times. The schedule is confirmed
                   after design and permit milestones and is updated as work moves forward.
