@@ -1,21 +1,20 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import Image, { type StaticImageData } from 'next/image';
 import { ChevronRight, ChevronLeft, X as CloseIcon } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-/* Static imports for cover images (free blur-up) */
-import napaCover from '@public/fullRebuilds/napaFullRebuild/E4-25.jpg';
-import barnesCover from '@public/fullRebuilds/barnes/E4-16.jpg';
-import bareBonesCover from '@public/fullRebuilds/fromBareBones/E4.jpg';
-import kitchenCover from '@public/interiorRenovations/kitchens/E4-21.jpg';
-import livingCover from '@public/interiorRenovations/livingSpaces/E4-5.jpg';
-import bathCover from '@public/interiorRenovations/baths/E4-13.jpg';
-import poolCover from '@public/PoolsAndOutdoorLiving/E4-11.jpg';
-import gradingCover from '@public/gradingEarthwork/E5-10.jpg';
+/* Static imports for cover images (fast blur-up) */
+import napaCover from '@public/optimized/fullRebuilds/napaFullRebuild/E4-25-1200.webp';
+import barnesCover from '@public/optimized/fullRebuilds/barnes/E4-16-1200.webp';
+import bareBonesCover from '@public/optimized/fullRebuilds/fromBareBones/E4-1200.webp';
+import kitchenCover from '@public/optimized/interiorRenovations/kitchens/E4-21-1200.webp';
+import livingCover from '@public/optimized/interiorRenovations/livingSpaces/E4-5-1200.webp';
+import bathCover from '@public/optimized/interiorRenovations/baths/E4-13-1200.webp';
+import poolCover from '@public/optimized/PoolsAndOutdoorLiving/E4-11-1200.webp';
+import gradingCover from '@public/optimized/gradingEarthwork/E5-10-1200.webp';
 
 /* ───────────────────────────── DATA ───────────────────────────── */
 type Project = { title: string; scope: string; images: string[] };
@@ -177,39 +176,73 @@ const coverByTitle: Record<string, StaticImageData> = {
   'Grading & Earthwork': gradingCover,
 };
 
-/* Minimal fallback for modal image load errors */
-function SafeModalImage({ src, alt }: { src: string; alt: string }) {
+/* Convert a public path to its optimized 1600.webp copy for the modal */
+const toOptimized = (src: string, w = 1600, ext = 'webp') =>
+  src.replace(
+    /^\/(.*)\/([^/]+)\.(jpe?g|png|webp|avif)$/i,
+    (_m, dir, name) => `/optimized/${dir}/${name}-${w}.${ext}`
+  );
+
+/* ─────────────── Modal image with skeleton + fallback to original ─────────────── */
+function ModalImage({ src, fallbackSrc, alt }: { src: string; fallbackSrc?: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  if (error) {
+
+  // If optimized fails, show original as a normal <img> (no Next transform)
+  if (error && fallbackSrc) {
     return (
       <img
-        src={src}
+        src={fallbackSrc}
         alt={alt}
-        style={{ maxHeight: '88vh', width: 'auto', borderRadius: 12, boxShadow: '0 25px 60px rgba(0,0,0,.5)' }}
+        style={{
+          maxHeight: '88vh',
+          width: 'auto',
+          borderRadius: 12,
+          boxShadow: '0 25px 60px rgba(0,0,0,.5)',
+        }}
       />
     );
   }
+
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={1400}
-      height={933}
-      quality={68}
-      className="max-h-[88vh] w-auto rounded-lg shadow-2xl"
-      onError={() => setError(true)}
-      priority
-    />
+    <div
+      className="relative rounded-lg shadow-2xl"
+      style={{ width: 'min(96vw, 1200px)', height: 'min(88vh, 80vh)' }}
+    >
+      {!loaded && <div className="absolute inset-0 rounded-lg bg-white/5 animate-pulse" />}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        quality={68}
+        className="object-contain rounded-lg"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+        onLoadingComplete={() => setLoaded(true)}
+        onError={() => setError(true)}
+        fetchPriority="high"
+        priority
+      />
+    </div>
   );
 }
 
+/* ───────────────────────────── PAGE ───────────────────────────── */
 export default function ProjectsClient() {
-  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
+  const [lightbox, setLightbox] = useState<{ images: string[]; fallbacks?: string[]; index: number } | null>(null);
 
-  const openLightbox = (images: string[], startIndex = 0) => setLightbox({ images, index: startIndex });
+  // Open with optimized URLs but keep originals as fallbacks
+  const openLightbox = (images: string[], startIndex = 0) =>
+    setLightbox({
+      images: images.map((s) => toOptimized(s, 1600, 'webp')),
+      fallbacks: images,
+      index: startIndex,
+    });
+
   const closeLightbox = () => setLightbox(null);
-  const prevImg = () => setLightbox((l) => (l ? { ...l, index: (l.index - 1 + l.images.length) % l.images.length } : l));
-  const nextImg = () => setLightbox((l) => (l ? { ...l, index: (l.index + 1) % l.images.length } : l));
+  const prevImg = () =>
+    setLightbox((l) => (l ? { ...l, index: (l.index - 1 + l.images.length) % l.images.length } : l));
+  const nextImg = () =>
+    setLightbox((l) => (l ? { ...l, index: (l.index + 1) % l.images.length } : l));
 
   // keyboard nav
   useEffect(() => {
@@ -233,6 +266,20 @@ export default function ProjectsClient() {
     else if (dx < -40) nextImg();
     startX.current = null;
   };
+
+  // prefetch neighbors while modal is open
+  useEffect(() => {
+    if (!lightbox) return;
+    const { images, index } = lightbox;
+    const n = images.length;
+    const preload = (url: string) => {
+      const img = new window.Image();
+      img.decoding = 'async';
+      img.src = url;
+    };
+    preload(images[(index + 1) % n]);
+    preload(images[(index - 1 + n) % n]);
+  }, [lightbox?.index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -376,9 +423,13 @@ export default function ProjectsClient() {
             <ChevronLeft className="h-9 w-9" />
           </button>
 
-          {/* Image (with fallback) */}
+          {/* Image (optimized + fallback) */}
           {lightbox.images[lightbox.index] ? (
-            <SafeModalImage src={lightbox.images[lightbox.index]} alt="Project image large view" />
+            <ModalImage
+              src={lightbox.images[lightbox.index]}
+              fallbackSrc={lightbox.fallbacks?.[lightbox.index]}
+              alt="Project image large view"
+            />
           ) : null}
 
           {/* Next */}
@@ -396,7 +447,10 @@ export default function ProjectsClient() {
           {/* Index dots */}
           <div className="absolute bottom-4 inset-x-0 flex justify-center gap-1.5 px-4">
             {lightbox.images.map((_, i) => (
-              <span key={i} className={`h-2.5 w-2.5 rounded-full ${i === lightbox.index ? 'bg-white' : 'bg-white/40'}`} />
+              <span
+                key={i}
+                className={`h-2.5 w-2.5 rounded-full ${i === lightbox.index ? 'bg-white' : 'bg-white/40'}`}
+              />
             ))}
           </div>
         </div>

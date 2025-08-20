@@ -834,6 +834,14 @@ import { ChevronRight, ChevronLeft, X as CloseIcon } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
+/* ────────────────── Static covers for blur-up (requires @public/* alias) ────────────────── */
+import napaFeat from '@public/optimized/fullRebuilds/napaFullRebuild/E4-25-1200.webp';
+import kitchenFeat from '@public/optimized/interiorRenovations/kitchens/E4-24-1200.webp';
+import poolFeat from '@public/optimized/PoolsAndOutdoorLiving/E4-11-1200.webp';
+import gradingFeat from '@public/optimized/gradingEarthwork/E5-12-1200.webp';
+import livingFeat from '@public/optimized/interiorRenovations/livingSpaces/E4-6-1200.webp';
+import barnesFeat from '@public/optimized/fullRebuilds/barnes/E4-16-1200.webp';
+
 /* ───────────────────────────── DATA ───────────────────────────── */
 type Project = { title: string; scope: string; images: string[] };
 type Category = { name: string; projects: Project[] };
@@ -982,22 +990,71 @@ const projectCategories: Category[] = [
   },
 ];
 
-/** Pick a small set of “hero-worthy” images for the Home collage.
- *  (Keep the rest for sector pages to avoid overwhelming the Home.)
+/** Curated images for the collage and feature cards:
+ *  - cover: statically imported 1200.webp (fast blur-up)
+ *  - raw: original public path for lightbox fallback
  */
-const featuredImages: { src: string; alt: string }[] = [
-  { src: '/fullRebuilds/napaFullRebuild/E4-25.jpg', alt: 'Napa Full Rebuild exterior' },
-  { src: '/interiorRenovations/kitchens/E4-24.jpg', alt: 'Kitchen remodel detail' },
-  { src: '/PoolsAndOutdoorLiving/E4-11.jpg', alt: 'Pool & patio' },
-  { src: '/gradingEarthwork/E5-12.jpg', alt: 'Grading & earthwork' },
-  { src: '/interiorRenovations/livingSpaces/E4-6.jpg', alt: 'Living space built-ins' },
-  { src: '/fullRebuilds/barnes/E4-16.jpg', alt: 'Ground-up development' },
+const featured = [
+  { cover: napaFeat, raw: '/fullRebuilds/napaFullRebuild/E4-25.jpg', alt: 'Napa Full Rebuild exterior' },
+  { cover: kitchenFeat, raw: '/interiorRenovations/kitchens/E4-24.jpg', alt: 'Kitchen remodel detail' },
+  { cover: poolFeat, raw: '/PoolsAndOutdoorLiving/E4-11.jpg', alt: 'Pool & patio' },
+  { cover: gradingFeat, raw: '/gradingEarthwork/E5-12.jpg', alt: 'Grading & earthwork' },
+  { cover: livingFeat, raw: '/interiorRenovations/livingSpaces/E4-6.jpg', alt: 'Living space built-ins' },
+  { cover: barnesFeat, raw: '/fullRebuilds/barnes/E4-16.jpg', alt: 'Ground-up development' },
 ];
+
+/* Convert a public path to its optimized 1600.webp copy for the modal */
+const toOptimized = (src: string, w = 1600, ext = 'webp') =>
+  src.replace(
+    /^\/(.*)\/([^/]+)\.(jpe?g|png|webp|avif)$/i,
+    (_m, dir, name) => `/optimized/${dir}/${name}-${w}.${ext}`
+  );
+
+/* Modal image with skeleton + fallback to original */
+function ModalImage({ src, fallbackSrc, alt }: { src: string; fallbackSrc?: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  if (error && fallbackSrc) {
+    return (
+      <img
+        src={fallbackSrc}
+        alt={alt}
+        style={{ maxHeight: '88vh', width: 'auto', borderRadius: 12, boxShadow: '0 25px 60px rgba(0,0,0,.5)' }}
+      />
+    );
+  }
+
+  return (
+    <div className="relative rounded-lg shadow-2xl" style={{ width: 'min(96vw, 1200px)', height: 'min(88vh, 80vh)' }}>
+      {!loaded && <div className="absolute inset-0 rounded-lg bg-white/5 animate-pulse" />}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        quality={68}
+        className="object-contain rounded-lg"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+        onLoadingComplete={() => setLoaded(true)}
+        onError={() => setError(true)}
+        fetchPriority="high"
+        priority
+      />
+    </div>
+  );
+}
 
 /* ───────────────────────── COMPONENT ───────────────────────── */
 export default function Home() {
-  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
-  const openLightbox = (images: string[], index = 0) => setLightbox({ images, index });
+  const [lightbox, setLightbox] = useState<{ images: string[]; fallbacks?: string[]; index: number } | null>(null);
+
+  const openLightbox = (images: string[], index = 0) =>
+    setLightbox({
+      images: images.map((s) => toOptimized(s, 1600, 'webp')),
+      fallbacks: images,
+      index,
+    });
+
   const closeLightbox = () => setLightbox(null);
   const prevImg = () => setLightbox((l) => (l ? { ...l, index: (l.index - 1 + l.images.length) % l.images.length } : l));
   const nextImg = () => setLightbox((l) => (l ? { ...l, index: (l.index + 1) % l.images.length } : l));
@@ -1025,20 +1082,42 @@ export default function Home() {
     startX.current = null;
   };
 
+  // prefetch neighbors while modal is open
+  useEffect(() => {
+    if (!lightbox) return;
+    const { images, index } = lightbox;
+    const n = images.length;
+    const preload = (url: string) => {
+      const img = new window.Image();
+      img.decoding = 'async';
+      img.src = url;
+    };
+    preload(images[(index + 1) % n]);
+    preload(images[(index - 1 + n) % n]);
+  }, [lightbox?.index]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       <Header active="home" />
 
       <main className="min-h-screen bg-white text-[#2C2C2C] font-sans overflow-x-hidden">
-        {/* ───────── HERO (kept) ───────── */}
+        {/* ───────── HERO ───────── */}
         <section className="relative h-[78vh] flex items-center justify-center overflow-hidden">
-          <Image src="/hero-modern-home.jpg" alt="Modern custom home" fill priority className="object-cover" sizes="100vw" />
+          <Image
+            src="/hero-modern-home.jpg"
+            alt="Modern custom home"
+            fill
+            priority
+            quality={68}
+            className="object-cover"
+            sizes="100vw"
+          />
           <div className="absolute inset-0 bg-black/40" />
           <div className="relative text-center px-6 sm:px-8 py-12 max-w-5xl">
             <h1 className="text-white text-4xl sm:text-6xl font-extrabold leading-tight">
               Building Homes. <br className="hidden sm:block" /> Rebuilding Communities.
             </h1>
-           
+
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/projects"
@@ -1059,47 +1138,46 @@ export default function Home() {
         </section>
 
         {/* ——— Owner Welcome ——— */}
-     <section aria-labelledby="welcome" className="px-4 sm:px-6 lg:px-8 py-10 bg-white">
-      <h2 id="welcome" className="sr-only">Welcome</h2>
-      <div className="mx-auto max-w-3xl text-center">
-        <p className="text-gray-800 text-lg leading-relaxed">
-          Welcome, I’m <span className="font-semibold text-[#B21F24]">Russell Nobles</span>, owner of
-          <span className="font-semibold"> RN Construction</span>. My team helps families and businesses plan, permit, and
-          build with clear communication and craftsmanship. We handle residential work like kitchens, baths, additions, and
-          complete rebuilds, and we also deliver award-winning commercial projects including restaurants, tenant
-          improvements, public works, and multi-family repairs. From early budgeting and scheduling to permits, inspections,
-          and punch lists, you get one accountable partner who keeps things moving and keeps you informed.
-        </p>
-        <p className="text-gray-800 text-lg leading-relaxed mt-4">
-          If you are exploring a project or rebuilding after a loss, I would be glad to talk through your options and outline
-          a practical path forward. <span className="font-semibold">Reach out anytime</span> to schedule a consultation or give us a call.
-          We are here to help.
-        </p>
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-7 py-3 rounded-full bg-[#B21F24] text-white font-semibold shadow-md hover:brightness-110 transition"
-          >
-            Schedule a Consultation
-          </a>
-          <a
-            href="tel:+16267609310"
-            className="px-7 py-3 rounded-full border border-[#B21F24] text-[#B21F24] font-semibold shadow-md hover:bg-[#B21F24]/10 transition"
-          >
-            Call (626) 760-9310
-          </a>
-        </div>
-      </div>
-    </section>
+        <section aria-labelledby="welcome" className="px-4 sm:px-6 lg:px-8 py-10 bg-white">
+          <h2 id="welcome" className="sr-only">Welcome</h2>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-gray-800 text-lg leading-relaxed">
+              Welcome, I’m <span className="font-semibold text-[#B21F24]">Russell Nobles</span>, owner of
+              <span className="font-semibold"> RN Construction</span>. My team helps families and businesses plan, permit, and
+              build with clear communication and craftsmanship. We handle residential work like kitchens, baths, additions, and
+              complete rebuilds, and we also deliver award-winning commercial projects including restaurants, tenant
+              improvements, public works, and multi-family repairs. From early budgeting and scheduling to permits, inspections,
+              and punch lists, you get one accountable partner who keeps things moving and keeps you informed.
+            </p>
+            <p className="text-gray-800 text-lg leading-relaxed mt-4">
+              If you are exploring a project or rebuilding after a loss, I would be glad to talk through your options and outline
+              a practical path forward. <span className="font-semibold">Reach out anytime</span> to schedule a consultation or give us a call.
+              We are here to help.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-3 rounded-full bg-[#B21F24] text-white font-semibold shadow-md hover:brightness-110 transition"
+              >
+                Schedule a Consultation
+              </a>
+              <a
+                href="tel:+16267609310"
+                className="px-7 py-3 rounded-full border border-[#B21F24] text-[#B21F24] font-semibold shadow-md hover:bg-[#B21F24]/10 transition"
+              >
+                Call (626) 760-9310
+              </a>
+            </div>
+          </div>
+        </section>
 
-
-        {/* ───────── SECTORS & CAPABILITIES (link lists, no cards) ───────── */}
+        {/* ───────── SECTORS & CAPABILITIES ───────── */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-100 bg-white">
           <div className="mx-auto max-w-7xl">
             <div className="grid lg:grid-cols-2 gap-10">
-              {/* Sectors (left) */}
+              {/* Sectors */}
               <div>
                 <h2 className="text-2xl sm:text-3xl font-semibold text-[#B21F24] mb-3">Sectors We Serve</h2>
                 <p className="text-gray-600 mb-6">
@@ -1131,7 +1209,7 @@ export default function Home() {
                 </ul>
               </div>
 
-              {/* Capabilities (right) */}
+              {/* Capabilities */}
               <div>
                 <h2 className="text-2xl sm:text-3xl font-semibold text-[#B21F24] mb-3">Capabilities</h2>
                 <p className="text-gray-600 mb-6">
@@ -1162,14 +1240,17 @@ export default function Home() {
                   ))}
                 </ul>
                 <div className="mt-4 text-sm text-gray-600">
-                  Prefer a single page overview? Read our <Link href="/capabilities" className="text-[#B21F24] font-semibold hover:underline">Capabilities</Link>.
+                  Prefer a single page overview? Read our{' '}
+                  <Link href="/capabilities" className="text-[#B21F24] font-semibold hover:underline">
+                    Capabilities
+                  </Link>.
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ───────── FEATURED STORIES (image + copy; warmer than “cards”) ───────── */}
+        {/* ───────── FEATURED STORIES ───────── */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 bg-gray-50 border-t border-gray-200">
           <div className="mx-auto max-w-7xl">
             <h2 className="text-2xl sm:text-3xl font-semibold text-[#B21F24] mb-8">Featured Stories</h2>
@@ -1178,7 +1259,7 @@ export default function Home() {
               {/* Story 1 */}
               <article className="rounded-xl overflow-hidden border border-gray-200 bg-white">
                 <div className="relative aspect-[3/2]">
-                  <Image src={featuredImages[0].src} alt={featuredImages[0].alt} fill className="object-cover" />
+                  <Image src={featured[0].cover} alt={featured[0].alt} fill quality={68} placeholder="blur" className="object-cover" />
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold">From Loss to Move-In: Napa Full Rebuild</h3>
@@ -1199,7 +1280,7 @@ export default function Home() {
               {/* Story 2 */}
               <article className="rounded-xl overflow-hidden border border-gray-200 bg-white">
                 <div className="relative aspect-[3/2]">
-                  <Image src={featuredImages[2].src} alt={featuredImages[2].alt} fill className="object-cover" />
+                  <Image src={featured[2].cover} alt={featured[2].alt} fill quality={68} placeholder="blur" className="object-cover" />
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold">Outdoor Living that Works Year-Round</h3>
@@ -1220,21 +1301,33 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ───────── SELECTED WORK (keep your gallery feel) ───────── */}
+        {/* ───────── SELECTED WORK (collage) ───────── */}
         <section className="px-4 sm:px-6 lg:px-8 py-16 bg-white border-t border-gray-100">
           <div className="mx-auto max-w-7xl">
             <h2 className="text-2xl sm:text-3xl font-semibold text-[#B21F24] mb-6">Selected Work</h2>
             <p className="text-gray-600 mb-8">A few highlights. Explore more on the sector pages or the projects index.</p>
 
-            {/* Simple collage using the curated featuredImages */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {featuredImages.map((img, i) => (
-                <div key={i} className="relative aspect-[3/2] cursor-pointer group rounded-lg overflow-hidden" onClick={() => openLightbox(featuredImages.map(f => f.src), i)}>
-                  <Image src={img.src} alt={img.alt} fill className="object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 sm:group-hover:opacity-100 transition">
-                    <div className="text-white text-xs md:text-sm">{img.alt}</div>
-                  </div>
-                </div>
+              {featured.map((f, i) => (
+                <button
+                  key={i}
+                  className="relative aspect-[3/2] cursor-pointer group rounded-lg overflow-hidden"
+                  onClick={() => openLightbox(featured.map((x) => x.raw), i)}
+                  aria-label={`Open image ${i + 1}`}
+                >
+                  <Image
+                    src={f.cover}
+                    alt={f.alt}
+                    fill
+                    quality={68}
+                    placeholder="blur"
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 33vw"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 sm:group-hover:opacity-100 transition text-white text-xs md:text-sm">
+                    {f.alt}
+                  </span>
+                </button>
               ))}
             </div>
 
@@ -1246,7 +1339,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ───────── TESTIMONIALS (kept) ───────── */}
+        {/* ───────── TESTIMONIALS ───────── */}
         <section id="testimonials" className="py-20 bg-gray-100 px-4 sm:px-6 lg:px-8 border-t border-gray-200">
           <div className="max-w-5xl mx-auto text-center">
             <h3 className="text-3xl font-semibold text-[#B21F24] mb-10">What Our Clients Say</h3>
@@ -1267,7 +1360,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ───────── CTA (kept) ───────── */}
+        {/* ───────── CTA ───────── */}
         <section className="py-16 bg-[#B21F24] text-white text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h3 className="text-3xl font-semibold mb-4">Ready to talk through your project?</h3>
@@ -1304,6 +1397,7 @@ export default function Home() {
           role="dialog"
           aria-label="Image viewer"
         >
+          {/* Close */}
           <button
             aria-label="Close"
             className="absolute top-3 right-3 text-white bg-white/15 hover:bg-white/25 backdrop-blur rounded-full p-3 shadow-lg ring-1 ring-white/20"
@@ -1315,38 +1409,38 @@ export default function Home() {
             <CloseIcon className="h-6 w-6" />
           </button>
 
+          {/* Prev */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               prevImg();
             }}
             aria-label="Previous image"
-            className="absolute left-3 text-white bg-white/20 hover:bg-white/30 backdrop-blur rounded-full p-3 shadow-xl ring-1 ring-white/30"
+            className="absolute left-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md rounded-full p-4 shadow-2xl ring-1 ring-white/40"
           >
-            <ChevronLeft className="h-7 w-7" />
+            <ChevronLeft className="h-9 w-9" />
           </button>
 
-          <Image
-            src={(lightbox.images as string[])[lightbox.index]}
+          {/* Image (optimized + fallback) */}
+          <ModalImage
+            src={lightbox.images[lightbox.index]}
+            fallbackSrc={lightbox.fallbacks?.[lightbox.index]}
             alt="Project image large view"
-            width={1400}
-            height={933}
-            className="max-h-[88vh] w-auto rounded-lg shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-            priority
           />
 
+          {/* Next */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               nextImg();
             }}
             aria-label="Next image"
-            className="absolute right-3 text-white bg-white/20 hover:bg-white/30 backdrop-blur rounded-full p-3 shadow-xl ring-1 ring-white/30"
+            className="absolute right-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md rounded-full p-4 shadow-2xl ring-1 ring-white/40"
           >
-            <ChevronRight className="h-7 w-7" />
+            <ChevronRight className="h-9 w-9" />
           </button>
 
+          {/* Index dots */}
           <div className="absolute bottom-4 inset-x-0 flex justify-center gap-1.5 px-4">
             {lightbox.images.map((_, i) => (
               <span key={i} className={`h-2.5 w-2.5 rounded-full ${i === lightbox.index ? 'bg-white' : 'bg-white/40'}`} />

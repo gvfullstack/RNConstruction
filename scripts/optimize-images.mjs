@@ -1,72 +1,60 @@
-import fs from 'fs/promises';
-import path from 'path';
+// scripts/optimize-images.mjs
+import { globby } from 'globby';
 import sharp from 'sharp';
-import globby from 'globby';
-import pLimit from 'p-limit';
+import { dirname, extname, join, basename } from 'node:path';
+import { mkdir } from 'node:fs/promises';
 
-const ROOT = process.cwd();
-const PUB_DIR = path.join(ROOT, 'public');        // adjust if yours differs
-const MAX_W = 2000;                               // covers/heroes: 2000–2400 is plenty
-const CONCURRENCY = 4;                            // tune for your CPU
+// Which files to optimize
+const INPUT_GLOBS = ['public/**/*.{jpg,jpeg,png}'];
 
-const limit = pLimit(CONCURRENCY);
+// Where to write optimized variants (inside public/)
+const OUT_ROOT = 'public/optimized';
 
-const isJpg = (p) => /\.(jpe?g)$/i.test(p);
-const isPng = (p) => /\.png$/i.test(p);
+// Output widths (you can adjust)
+const WIDTHS = [1600, 1200, 800];
 
-async function optimizeOne(absPath) {
-  const rel = path.relative(ROOT, absPath);
-  const ext = path.extname(absPath).toLowerCase();
-  const base = absPath.slice(0, -ext.length);
-  const webpPath = `${base}.webp`;
+// Quality settings
+const JPEG_Q = 76;
+const WEBP_Q = 68;
+const AVIF_Q = 50;
 
-  const img = sharp(absPath, { failOn: 'none' });
-  const meta = await img.metadata();
+const files = await globby(INPUT_GLOBS, { gitignore: true });
 
-  // resize only if wider than cap
-  const width = meta.width ?? MAX_W;
-  const resized = width > MAX_W ? img.resize({ width: MAX_W }) : img.clone();
-
-  // write optimized original in-place
-  if (isJpg(absPath)) {
-    await resized.jpeg({ quality: 80, mozjpeg: true }).toFile(absPath);
-  } else if (isPng(absPath)) {
-    await resized.png({ compressionLevel: 9, adaptiveFiltering: true }).toFile(absPath);
-  }
-
-  // also write WebP neighbor
-  await resized.webp({ quality: 78 }).toFile(webpPath);
-
-  return rel;
+if (!files.length) {
+  console.log('No images found for optimization.');
+  process.exit(0);
 }
 
-async function main() {
-  console.log('Scanning public/ for images…');
-  const files = await globby(['public/**/*.{jpg,jpeg,png}'], { absolute: true });
+for (const file of files) {
+  const ext = extname(file).toLowerCase(); // .jpg/.jpeg/.png
+  const base = basename(file, ext);
+  // keep folder structure under /optimized
+  const relDir = dirname(file).replace(/^public[\\/]/, '');
+  const outDir = join(OUT_ROOT, relDir);
+  await mkdir(outDir, { recursive: true });
 
-  if (!files.length) {
-    console.log('No JPG/PNG files found under public/. Nothing to do.');
-    return;
+  const img = sharp(file, { failOn: 'none' });
+
+  for (const w of WIDTHS) {
+    const chain = img.clone().resize({ width: w, withoutEnlargement: true });
+
+    // Keep original format too
+    if (ext === '.jpg' || ext === '.jpeg') {
+      await chain
+        .jpeg({ quality: JPEG_Q, mozjpeg: true })
+        .toFile(join(outDir, `${base}-${w}.jpg`));
+    } else if (ext === '.png') {
+      await chain
+        .png({ compressionLevel: 9, palette: true })
+        .toFile(join(outDir, `${base}-${w}.png`));
+    }
+
+    // Modern formats
+    await chain.clone().webp({ quality: WEBP_Q }).toFile(join(outDir, `${base}-${w}.webp`));
+    await chain.clone().avif({ quality: AVIF_Q }).toFile(join(outDir, `${base}-${w}.avif`));
   }
 
-  console.log(`Found ${files.length} images. Optimizing (cap ${MAX_W}px)…`);
-  let done = 0;
-  await Promise.all(
-    files.map((f) =>
-      limit(() =>
-        optimizeOne(f)
-          .then(() => {
-            done += 1;
-            if (done % 10 === 0) console.log(`  ${done}/${files.length}…`);
-          })
-          .catch((e) => console.warn('  ⚠️  Skipped:', f, e.message))
-      )
-    )
-  );
-  console.log('✅ Optimization complete.');
+  console.log(`✓ Optimized: ${file}`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+console.log('\nDone. Optimized files were written to /public/optimized/…');
