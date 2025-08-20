@@ -18,12 +18,8 @@ type Active =
   | 'disaster-recovery'
   | 'capabilities';
 
-interface Props {
-  active?: Active;
-}
-
 type HeaderProps = {
-  active?: string;
+  active?: Active;
   showTagline?: boolean; // toggle if needed
 };
 

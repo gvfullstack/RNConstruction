@@ -3,7 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SimpleHero from "@/components/SimpleHero";
-import SectionIndexChips, { TocSection } from "@/components/SectionIndexChips";
+import SectionIndexChips from "@/components/SectionIndexChips";
 import SectionIndexSidebar from "@/components/SectionIndexSidebar";
 
 export const metadata: Metadata = {
