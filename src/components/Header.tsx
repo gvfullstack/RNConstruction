@@ -22,10 +22,16 @@ interface Props {
   active?: Active;
 }
 
-export default function Header({ active = 'home' }: Props) {
+type HeaderProps = {
+  active?: string;
+  showTagline?: boolean; // toggle if needed
+};
+
+export default function Header({ active, showTagline = true }: HeaderProps) {
   const red = '#B21F24';
-  const base = 'hover:text-[#B21F24] transition whitespace-nowrap';
-  const highlight = `text-[${red}] font-semibold whitespace-nowrap`;
+  // more comfortable link hit-area
+  const base = 'px-1.5 py-1 hover:text-[#B21F24] transition whitespace-nowrap';
+  const highlight = `px-1.5 py-1 text-[${red}] font-semibold whitespace-nowrap`;
 
   // mobile panel
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,7 +64,6 @@ export default function Header({ active = 'home' }: Props) {
   // shared classes
   const menuItem =
     'block w-full text-left px-4 py-2 text-sm text-[#2C2C2C] hover:bg-gray-100 rounded-md';
-  // NOTE: removed mt-2 to eliminate physical gap under the trigger
   const panel =
     'absolute left-0 top-full w-[min(20rem,90vw)] rounded-lg bg-white shadow-xl ring-1 ring-black/5 p-2';
 
@@ -105,7 +110,7 @@ export default function Header({ active = 'home' }: Props) {
                   ${isHidden ? '-translate-y-full' : 'translate-y-0'}`}
     >
       <div className="mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-4 md:py-6">
+        <div className="flex items-center justify-between py-3 md:py-4">
           {/* Brand */}
           <Link href="/" className="flex items-center space-x-3 shrink-0">
             <Image
@@ -116,18 +121,18 @@ export default function Header({ active = 'home' }: Props) {
               priority
               className="h-10 w-auto md:h-12"
             />
-            <span className="text-2xl md:text-3xl font-bold tracking-tight">
+            {/* <span className="text-2xl md:text-3xl font-bold tracking-tight">
               RN Construction
-            </span>
+            </span> */}
           </Link>
 
           {/* Desktop nav (≥1280px) */}
-          <nav className="hidden xl:flex items-center gap-6 ml-6 mr-auto">
+          <nav className="hidden xl:flex items-center gap-6 xl:gap-8 2xl:gap-10 ml-8 mr-auto min-w-0">
             <Link href="/" className={active === 'home' ? highlight : base}>
               Home
             </Link>
 
-            {/* Sectors dropdown (state-driven; no hover gap) */}
+            {/* Sectors dropdown */}
             <div
               className="relative"
               onMouseEnter={() => openNow('sectors')}
@@ -147,7 +152,6 @@ export default function Header({ active = 'home' }: Props) {
               </button>
 
               <div className={`${panel} ${openSectors ? 'block' : 'hidden'}`}>
-                {/* Visual separation inside panel, not outside */}
                 <div className="px-2 pt-1 pb-2 text-[11px] uppercase tracking-wide text-gray-500">
                   Residential & Commercial
                 </div>
@@ -172,7 +176,7 @@ export default function Header({ active = 'home' }: Props) {
               </div>
             </div>
 
-            {/* Capabilities dropdown (state-driven; no hover gap) */}
+            {/* Capabilities dropdown */}
             <div
               className="relative"
               onMouseEnter={() => openNow('caps')}
@@ -219,20 +223,22 @@ export default function Header({ active = 'home' }: Props) {
             </Link>
           </nav>
 
-          {/* Desktop CTAs */}
-          <div className="hidden xl:flex flex-col items-stretch gap-2 lg:ml-4 xl:ml-6 2xl:ml-8 lg:border-l lg:border-white/10 lg:pl-4">
+          {/* Desktop CTAs (balanced, no vertical divider) */}
+          <div className="hidden xl:flex items-center gap-3">
             <a
               href="https://outlook.office.com/owa/calendar/RussellNobles@rnconstruction.com/bookings/?ismsaljsauthenabled"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden inline-flex items-center px-4 py-2 rounded-full border border-white text-white text-sm font-semibold shadow-md hover:bg-white/10 transition whitespace-nowrap"
+              className="inline-flex items-center px-4 py-2 rounded-full
+                         border border-white/80 text-white/90 text-sm font-semibold
+                         hover:bg-white/10 transition whitespace-nowrap"
             >
               Schedule a Consultation
             </a>
             <a
               href="tel:6267609310"
-              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-[#B21F24] text-white
-                         text-base font-semibold shadow-md shadow-gray-200/50 hover:brightness-110 transition whitespace-nowrap"
+              className="inline-flex items-center px-4 py-2 rounded-full bg-[#B21F24]
+                         text-white text-sm font-semibold shadow-md hover:brightness-110 transition whitespace-nowrap"
             >
               Call 626-760-9310
             </a>
@@ -317,12 +323,22 @@ export default function Header({ active = 'home' }: Props) {
         </div>
       </div>
 
-      {/* Optional sectors strip below header (kept) */}
-      <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
-        <p className="italic py-2 text-white/80 text-center text-sm sm:text-base">
-          We build for homeowners, businesses, and public agencies: Residential · Commercial · Public Works · Restaurants · Tenant Improvements · Multifamily/HOA
-        </p>
-      </div>
+      {/* Subheader tagline bar (clean, non-italic) */}
+      {showTagline && (
+        <div className="bg-[#121212] border-t border-white/10">
+          <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
+            <p className="py-2 text-center text-sm text-white/75">
+              We build for homeowners, businesses, and public agencies:&nbsp;
+              <span className="whitespace-nowrap">Residential</span> ·
+              <span className="whitespace-nowrap"> Commercial</span> ·
+              <span className="whitespace-nowrap"> Public Works</span> ·
+              <span className="whitespace-nowrap"> Restaurants</span> ·
+              <span className="whitespace-nowrap"> Tenant Improvements</span> ·
+              <span className="whitespace-nowrap"> Multifamily/HOA</span>
+            </p>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
