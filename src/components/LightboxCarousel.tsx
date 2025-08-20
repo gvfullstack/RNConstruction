@@ -125,21 +125,24 @@ export default function LightboxCarousel({ open, images, initialIndex = 0, onClo
           <div className="absolute inset-0 rounded-lg bg-white/5 animate-pulse" />
         )}
         {/* Try optimized first; if it errors, fall back to original */}
-        <Image
-          key={idx}
-          src={errored ? images[idx] : optimized[idx]}
-          alt="Project image"
-          fill
-          quality={68}
-          className="object-contain rounded-lg select-none"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
-          onLoadingComplete={() => setLoaded(true)}
-          onError={() => setErrored(true)}
-          priority
-          fetchPriority="high"
-        />
+        {(errored ? images[idx] : optimized[idx]) ? (
+          <Image
+            key={idx}
+            src={errored ? images[idx] : optimized[idx]}
+            alt="Project image"
+            fill
+            quality={68}
+            className="object-contain rounded-lg"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+            onLoadingComplete={() => setLoaded(true)}
+            onError={() => setErrored(true)}
+            priority
+            fetchPriority="high"
+          />
+        ) : null}
       </div>
 
+       
       {/* Dots */}
       <div className="absolute bottom-[max(0.5rem,env(safe-area-inset-bottom))] inset-x-0 flex justify-center gap-1.5 px-3">
         <div className="flex max-w-[92vw] overflow-x-auto no-scrollbar gap-1.5 p-1 rounded-full bg-white/10">
