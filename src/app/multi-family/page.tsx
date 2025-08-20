@@ -84,28 +84,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Walk the property with management,
-                    confirm priorities, and map phasing by building or stack.
-                    Identify access, parking, and staging spots.
-                  </li>
-                  <li>
-                    <strong>Design and approvals.</strong> Prepare drawings and
-                    scopes, coordinate any engineering, confirm finishes, and set
-                    notice templates and posting schedule.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Work moves in clear phases with
-                    signage and protection. Dust, noise, and debris are controlled.
-                    Crews follow quiet hours and keep paths open where possible.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Punch items are closed quickly.
-                    Warranties and documentation are delivered to management or the
-                    board with photos as needed.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Walk the property with management, confirm priorities, and map phasing by building or stack. Identify access, parking, and staging spots.",
+                        },
+                        {
+                          step: "2",
+                          title: "Design & Approvals",
+                          desc:
+                            "Prepare drawings and scopes, coordinate any engineering, confirm finishes, and set notice templates and posting schedule.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Work moves in clear phases with signage and protection. Dust, noise, and debris are controlled. Crews follow quiet hours and keep paths open where possible.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Punch items are closed quickly. Warranties and documentation are delivered to management or the board with photos as needed.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines depend on scope, approvals, and lead times. A firm
                   schedule is shared after the walkthrough and planning steps, then

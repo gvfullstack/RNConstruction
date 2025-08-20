@@ -84,24 +84,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Walk the home, review goals and budget, and note utilities, access, and
-                    any safety or staging needs.
-                  </li>
-                  <li>
-                    <strong>Design and permits.</strong> Finalize drawings and selections. Handle permit submittals, plan
-                    reviews, and the inspection order.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Sequence trades in a logical path. Protect lived-in areas, manage dust
-                    and noise, and keep paths clear.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Complete punch items, share warranty and O&amp;M info, and confirm final
-                    sign-offs.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Walk the home, review goals and budget, and note utilities, access, and any safety or staging needs.",
+                        },
+                        {
+                          step: "2",
+                          title: "Design & Permits",
+                          desc:
+                            "Finalize drawings and selections. Handle permit submittals, plan reviews, and the inspection order.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Sequence trades in a logical path. Protect lived-in areas, manage dust and noise, and keep paths clear.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Complete punch items, share warranty and O&M info, and confirm final sign-offs.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines depend on jurisdiction, scope, and lead times. We confirm the schedule after design and permit
                   milestones and update you as work moves forward.

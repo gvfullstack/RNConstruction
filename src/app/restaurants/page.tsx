@@ -85,28 +85,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Walk the site, confirm existing
-                    utilities, check for hood and grease interceptor needs, and
-                    review equipment lists with vendors.
-                  </li>
-                  <li>
-                    <strong>Design and permits.</strong> Submit hood and fire
-                    suppression plans, health department details, ADA items, and
-                    MEP drawings. Track comments and inspection order.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Rough-ins are placed to
-                    spec. Walls, tile, and washable surfaces go in. Equipment is
-                    set and connected after rough and finish inspections pass.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Final health, fire, and building
-                    inspections are scheduled. Punch items are closed and
-                    turnover documents are delivered.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Walk the site, confirm existing utilities, check for hood and grease interceptor needs, and review equipment lists with vendors.",
+                        },
+                        {
+                          step: "2",
+                          title: "Design & Permits",
+                          desc:
+                            "Submit hood and fire suppression plans, health department details, ADA items, and MEP drawings. Track comments and inspection order.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Rough-ins are placed to spec. Walls, tile, and washable surfaces go in. Equipment is set and connected after rough and finish inspections pass.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Final health, fire, and building inspections are scheduled. Punch items are closed and turnover documents are delivered.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines depend on scope, approvals, equipment lead times,
                   and finish selections. A working schedule is shared after

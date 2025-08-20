@@ -86,28 +86,52 @@ export default function Page() {
 
               {/* Process & timeline */}
               <ContentSection id="process" title="Process and timeline">
-                <ol className="mt-3 list-decimal pl-5 space-y-2">
-                  <li>
-                    <strong>Assessment.</strong> Review bid documents, walk the
-                    site, confirm scope and phasing, and identify access and
-                    protection needs.
-                  </li>
-                  <li>
-                    <strong>Submittals and approvals.</strong> Prepare
-                    submittals, track comments, and move RFIs through the
-                    approval chain before work starts.
-                  </li>
-                  <li>
-                    <strong>Construction.</strong> Follow the specs, hold
-                    pre-install meetings, schedule inspections in order, and
-                    keep daily reports current.
-                  </li>
-                  <li>
-                    <strong>Closeout.</strong> Deliver O&amp;M manuals,
-                    as-builts, warranties, and training as required by the
-                    contract.
-                  </li>
-                </ol>
+                <div className="bg-gray-100 rounded-xl p-6 sm:p-8">
+                  <div className="max-w-5xl mx-auto">
+                    <h3 className="text-xl font-semibold text-[#B21F24] text-center mb-8">
+                      Our Build Process
+                    </h3>
+                    <div className="grid md:grid-cols-4 gap-6 text-center">
+                      {[
+                        {
+                          step: "1",
+                          title: "Assessment",
+                          desc:
+                            "Review bid documents, walk the site, confirm scope and phasing, and identify access and protection needs.",
+                        },
+                        {
+                          step: "2",
+                          title: "Submittals & Approvals",
+                          desc:
+                            "Prepare submittals, track comments, and move RFIs through the approval chain before work starts.",
+                        },
+                        {
+                          step: "3",
+                          title: "Construction",
+                          desc:
+                            "Follow the specs, hold pre-install meetings, schedule inspections in order, and keep daily reports current.",
+                        },
+                        {
+                          step: "4",
+                          title: "Closeout",
+                          desc:
+                            "Deliver O&M manuals, as-builts, warranties, and training as required by the contract.",
+                        },
+                      ].map(({ step, title, desc }) => (
+                        <div
+                          key={step}
+                          className="bg-white p-6 rounded-lg shadow-md shadow-gray-200/70"
+                        >
+                          <div className="h-12 w-12 mx-auto rounded-full bg-[#B21F24] text-white flex items-center justify-center text-xl font-bold mb-4">
+                            {step}
+                          </div>
+                          <h4 className="text-lg font-semibold mb-2">{title}</h4>
+                          <p className="text-sm leading-relaxed">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <p className="mt-3 text-gray-600">
                   Timelines depend on scope, approvals, and lead times. The
                   schedule is confirmed after the approval steps and is updated
